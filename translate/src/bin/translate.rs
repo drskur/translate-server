@@ -25,7 +25,7 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
         if line.trim().is_empty() {
             continue;
         }
-        
+
         let translate = client.translate_text()
             .source_language_code("en")
             .target_language_code("ko")
@@ -33,7 +33,9 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
             .send()
             .await?;
 
+        lines.push(line.to_string());
         lines.push(translate.translated_text.unwrap_or("".to_string()));
+        lines.push("".to_string());
     }
 
     let result = lines.join("\n");
