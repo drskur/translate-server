@@ -2,8 +2,49 @@
 <html lang="ko">
 <head>
     <title>Translate</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.9.6/dist/cdn.min.js"></script>
 </head>
 <body>
-    <h1>Hello Translate</h1>
+    <div x-data="{text: ''}" class="container mx-auto">
+        <textarea 
+            @change="handleChangeText($data)"
+            x-model="text"
+            class="resize-none border rounded w-full mt-5 h-40 p-3"></textarea>
+    
+        <div class="mt-3 w-full">
+            <p x-show="$store.fetch.loading">Translating...</p>
+            <textarea 
+                x-show="$store.fetch.translatedText !== ''"
+                x-text="$store.fetch.translatedText"
+                class="resize-none border rounded h-screen w-full mt-5 p-3">{res.translatedText}</textarea>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('fetch', {
+                loading: false,
+                translatedText: ''
+            });
+        })
+
+        function handleChangeText({text}) {
+            Alpine.store('fetch', { loading: true, translatedText: '' });
+            fetch('https://on2helg9of.execute-api.ap-northeast-1.amazonaws.com/prod/api/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({text})
+            })
+                .then(res => res.json())
+                .then(res => Alpine.store('fetch', {
+                    loading: false,
+                    translatedText: res.translatedText
+                }));
+        }
+    </script>
 </body>
 </html>

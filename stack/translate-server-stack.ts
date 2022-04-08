@@ -6,8 +6,6 @@ import {PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
 export class TranslateServerStack extends Stack {
 
-
-
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
@@ -19,6 +17,7 @@ export class TranslateServerStack extends Stack {
             resources: ['*'],
             actions: ['translate:TranslateText']
         }))
+
 
         api.root.addMethod("GET", new aws_apigateway.LambdaIntegration(indexFunction, { credentialsRole: apiRole }));
         

@@ -35,6 +35,6 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
     let result = lines.join("\n");
 
     Ok(json! {{
-        "translated": result
+        "translatedText": result
     }})
 }
