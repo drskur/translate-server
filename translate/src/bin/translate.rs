@@ -22,6 +22,10 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
     let mut lines = vec![];
 
     for line in body.text.split("\n") {
+        if line.trim().is_empty() {
+            continue;
+        }
+        
         let translate = client.translate_text()
             .source_language_code("en")
             .target_language_code("ko")
