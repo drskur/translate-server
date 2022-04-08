@@ -3,5 +3,18 @@ name = "translate"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "translate"
+path = "src/bin/translate.rs"
+
+[[bin]]
+name = "index"
+path = "src/bin/index.rs"
+
 [dependencies]
-rocket = "0.5.0-rc.1"
+tokio = { version = "1", features = [ "full" ] }
+lambda_http = "0.5.1"
+aws-sdk-translate = "0.9.0"
+aws-config = "0.9.0"
+serde = "1"
+serde_json = "1"
