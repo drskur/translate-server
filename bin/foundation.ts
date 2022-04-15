@@ -12,7 +12,7 @@ new TranslateServerStack(app, 'TranslateServerStack', {
 
 new CdkPipelineStack(app, 'TranslateServerCdkPipelineStack', {
     env: {
-        region: 'us-east-1'
+        region: 'ap-northeast-1'
     }
 });
 
