@@ -3,6 +3,6 @@ build:
 	mkdir -p ../.dist
 	cp target/lambda/app/bootstrap ../.dist/
 codebuild:
-    cargo build --release --bin app
-    mkdir -p ../.dist
-    cp target/release/app ../.dist/bootstrap
+	cargo build --release --bin app
+	mkdir -p ../.dist
+	cp target/release/app ../.dist/bootstrap
