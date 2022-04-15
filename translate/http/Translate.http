@@ -1,0 +1,9 @@
+POST http://localhost:8080/api/translate
+Content-Type: application/json
+Authorization: Basic ZHJza3VyOg==
+
+{
+  "text": "I am a boy."
+}
+
+###

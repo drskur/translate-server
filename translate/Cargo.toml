@@ -4,14 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "translate"
-path = "src/bin/translate.rs"
-
-[[bin]]
-name = "index"
-path = "src/bin/index.rs"
-
-[[bin]]
 name = "app"
 path = "src/bin/app.rs"
 

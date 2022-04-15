@@ -1,7 +1,7 @@
 import {aws_certificatemanager, aws_lambda, aws_route53, Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {Architecture, AssetCode, Code, Runtime} from "aws-cdk-lib/aws-lambda";
-import {PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
+import {PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {HttpApi, DomainName} from "@aws-cdk/aws-apigatewayv2-alpha";
 import {HttpLambdaIntegration} from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import {HostedZone} from "aws-cdk-lib/aws-route53";

@@ -1,11 +1,14 @@
 use actix_web::dev::ServiceRequest;
-use actix_web::{Error, HttpResponse};
-use actix_web::error::ErrorUnauthorized;
+use actix_web::{Error, HttpResponse, Result};
+use actix_web::error::{ErrorInternalServerError, ErrorUnauthorized};
 use actix_web_httpauth::extractors::basic::BasicAuth;
 use actix_web_httpauth::middleware::HttpAuthentication;
 use actix_web::http::header::ContentType;
-use lambda_web::actix_web::{self, get, App, HttpServer};
+use actix_web::web::Json;
+use lambda_web::actix_web::{self, get, post, App, HttpServer};
 use lambda_web::{is_running_on_lambda, run_actix_on_lambda, LambdaError};
+use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<ServiceRequest, Error> {
 
@@ -23,6 +26,7 @@ async fn main() -> Result<(),LambdaError> {
         App::new()
             .wrap(auth)
             .service(index)
+            .service(translate)
     };
 
     if is_running_on_lambda() {
@@ -43,4 +47,42 @@ async fn index() -> HttpResponse {
     HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(html)
+}
+
+#[derive(Deserialize, Serialize)]
+struct TranslateMsg {
+    text: String
+}
+
+#[post("/api/translate")]
+async fn translate(msg: Json<TranslateMsg>) -> Result<HttpResponse, Error> {
+    let shared_config = aws_config::load_from_env().await;
+    let client = aws_sdk_translate::Client::new(&shared_config);
+
+    let mut lines = vec![];
+
+    for line in msg.text.split("\n") {
+        if line.trim().is_empty() {
+            continue;
+        }
+
+        let translate = client.translate_text()
+            .source_language_code("en")
+            .target_language_code("ko")
+            .text(line)
+            .send()
+            .await
+            .map_err(|e| ErrorInternalServerError(e))?;
+
+        lines.push(line.to_string());
+        lines.push(translate.translated_text.unwrap_or("".to_string()));
+        lines.push("".to_string());
+    }
+
+    let result = lines.join("\n");
+
+    Ok(HttpResponse::Ok()
+        .json(json!({
+            "translatedText": result
+        })))
 }
