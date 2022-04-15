@@ -1,6 +1,6 @@
 # Translate Server
 
-Simple translate web app deployed on AWS Lambda.
+Simple translate(en -> ko) web app deployed on AWS Lambda.
 
 ```
                            ┌─────────┐      ┌─────────────┐      ┌───────────┐
