@@ -1,14 +1,26 @@
-# Welcome to your CDK TypeScript project
+# Translate Server
 
-This is a blank project for TypeScript development with CDK.
+Simple translate(en -> ko) web app deployed on AWS Lambda.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+```
+                           ┌─────────┐      ┌─────────────┐      ┌───────────┐
+            ┌─────────┐    │   API   │      │ AWS Lambda  │      │  Amazon   │
+ User ─────▶│ Route53 │───▶│ GATEWAY │─────▶│ (Actix App) │◀────▶│ Translate │
+            └─────────┘    └─────────┘      └─────────────┘      └───────────┘
+```
 
-## Useful commands
+## Usage
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+```bash
+
+# install deps
+$ cargo install cargo-lambda
+$ npm i
+
+# build rust app
+$ npm run build
+
+# deploy
+$ npx cdk deploy
+
+```
