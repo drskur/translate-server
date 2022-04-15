@@ -8,15 +8,15 @@ phases:
     commands:
       - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
       - source $HOME/.cargo/env
-      - cargo install cargo-lambda
   build:
     commands:
       - cd translate
-      - make
+      - cargo build --release --bin app
+      - mv target/aarch64-unknown-linux-gnu/release/app target/aarch64-unknown-linux-gnu/release/bootstrap
 
 artifacts:
   files:
-    - translate/target/lambda/app/*
+    - translate/target/aarch64-unknown-linux-gnu/release/*
     - bin/*
     - stack/*
     - package.json
