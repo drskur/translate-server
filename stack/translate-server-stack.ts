@@ -1,58 +1,51 @@
-import {aws_apigateway, aws_apigatewayv2, aws_certificatemanager, aws_lambda, Stack, StackProps} from "aws-cdk-lib";
+import {aws_certificatemanager, aws_lambda, aws_route53, Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
-import {DomainName, RestApi} from "aws-cdk-lib/aws-apigateway";
 import {Architecture, AssetCode, Code, Runtime} from "aws-cdk-lib/aws-lambda";
 import {PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
+import {HttpApi, DomainName} from "@aws-cdk/aws-apigatewayv2-alpha";
+import {HttpLambdaIntegration} from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import {HostedZone} from "aws-cdk-lib/aws-route53";
 
 export class TranslateServerStack extends Stack {
 
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        const api = this.createApiGateway();
-        const apiRole = this.createApiRole();
-        const indexFunction = this.createLambdaFunction('index', Code.fromAsset('translate/target/lambda/index/'));
-        const translateFunction = this.createLambdaFunction('translate', Code.fromAsset('translate/target/lambda/translate/'));
-        translateFunction.addToRolePolicy(new PolicyStatement({
+        const appFunction = this.createLambdaFunction("app", Code.fromAsset("translate/target/lambda/app/"));
+        appFunction.addToRolePolicy(new PolicyStatement({
             resources: ['*'],
             actions: ['translate:TranslateText']
-        }))
+        }));
 
+        const domain = this.createDomainName();
+        this.createApiGateway(new HttpLambdaIntegration('AppIntegration', appFunction), domain);
 
-        api.root.addMethod("GET", new aws_apigateway.LambdaIntegration(indexFunction, { credentialsRole: apiRole }));
-        
-        const apiRoute = api.root.addResource("api");
-        const translateRoute = apiRoute.addResource("translate");
-        translateRoute.addMethod("POST", new aws_apigateway.LambdaIntegration(translateFunction, { credentialsRole: apiRole }));
-
-        // const domain = this.createDomainName();
-        // domain.addBasePathMapping(api);
+        new aws_route53.CnameRecord(this, "AppRouteRecord", {
+            domainName: domain.regionalDomainName,
+            zone: HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+                hostedZoneId: 'Z08267903R7OZVB2BE5UB',
+                zoneName: 'drskur.xyz'
+            }),
+            recordName: 'translate'
+        });
     }
 
     private createDomainName(): DomainName {
-        const arn = 'arn:aws:acm:us-east-1:832344807991:certificate/162b74ce-24e8-4982-8b7c-6002c14e1c14';
-        return new aws_apigateway.DomainName(this, "TranslateDomainName", {
+        const arn = 'arn:aws:acm:ap-northeast-1:832344807991:certificate/b1dcbdc1-5b2f-4690-a108-5ca6e38b21fe';
+        return new DomainName(this, "TranslateDomainName", {
             domainName: "translate.drskur.xyz",
             certificate: aws_certificatemanager.Certificate.fromCertificateArn(this, "wild", arn),
         });
 
     }
 
-    private createApiRole(): Role {
-        const role = new Role(this, "api-role", {
-            roleName: "ApiRole",
-            assumedBy: new ServicePrincipal("apigateway.amazonaws.com")
+    private createApiGateway(defaultIntegration: HttpLambdaIntegration, domainName: DomainName): HttpApi {
+        return new HttpApi(this, "TranslateApi", {
+            defaultIntegration,
+            defaultDomainMapping: {
+                domainName,
+            }
         });
-        role.addToPolicy(new PolicyStatement({
-            resources: ['*'],
-            actions: ['lambda:InvokeFunction']
-        }));
-
-        return role;
-    }
-
-    private createApiGateway(): RestApi {
-        return new aws_apigateway.RestApi(this, "TranslateApi");
     }
 
     private createLambdaFunction(baseName: string, asset: AssetCode): aws_lambda.Function {
