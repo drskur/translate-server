@@ -11,7 +11,7 @@ export class TranslateServerStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        const appFunction = this.createLambdaFunction("app", Code.fromAsset("translate/target/lambda/app/"));
+        const appFunction = this.createLambdaFunction("app", Code.fromAsset("translate/target/release/"));
         appFunction.addToRolePolicy(new PolicyStatement({
             resources: ['*'],
             actions: ['translate:TranslateText']

@@ -12,11 +12,11 @@ phases:
     commands:
       - cd translate
       - cargo build --release --bin app
-      - mv target/aarch64-unknown-linux-gnu/release/app target/aarch64-unknown-linux-gnu/release/bootstrap
+      - mv target/release/app target/release/bootstrap
 
 artifacts:
   files:
-    - translate/target/aarch64-unknown-linux-gnu/release/*
+    - translate/target/release/*
     - bin/*
     - stack/*
     - package.json
