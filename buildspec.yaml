@@ -17,7 +17,13 @@ phases:
 artifacts:
   files:
     - translate/target/lambda/app/*
-  discard-paths: "yes"
+    - bin/*
+    - stack/*
+    - package.json
+    - tsconfig.json
+    - cdk.json
+    - jest.config.js
+  discard-paths: "no"
 
 cache:
   paths:
