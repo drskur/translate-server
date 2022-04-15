@@ -12,11 +12,12 @@ phases:
     commands:
       - cd translate
       - cargo build --release --bin app
-      - mv target/release/app target/release/bootstrap
+      - mkdir -p .dist
+      - mv target/release/app .dist/bootstrap
 
 artifacts:
   files:
-    - translate/target/release/*
+    - .dist/*
     - bin/*
     - stack/*
     - package.json
