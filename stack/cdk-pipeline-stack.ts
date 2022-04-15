@@ -2,12 +2,13 @@ import {SecretValue, Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {CodePipeline, CodePipelineSource, ShellStep} from "aws-cdk-lib/pipelines";
 import {ComputeType, LinuxArmBuildImage} from "aws-cdk-lib/aws-codebuild";
+import {TranslateServerDefaultStage} from "./translate-server-default-stage";
 
 export class CdkPipelineStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        new CodePipeline(this, 'Pipeline', {
+        const pipeline = new CodePipeline(this, 'Pipeline', {
             pipelineName: 'TranslateServerPipeline',
             synthCodeBuildDefaults: {
                 buildEnvironment: {
@@ -27,6 +28,12 @@ export class CdkPipelineStack extends Stack {
                     'npx cdk synth'
                 ]
             })
-        })
+        });
+
+        pipeline.addStage(new TranslateServerDefaultStage(this, "Default", {
+            env: {
+                region: 'ap-northeast-1'
+            }
+        }));
     }
 }
