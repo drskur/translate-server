@@ -5,7 +5,7 @@
     "translate-server": "bin/foundation.ts"
   },
   "scripts": {
-    "build": "cd translate && make",
+    "build": "cd translate && make codebuild",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"

@@ -1,10 +1,9 @@
-import {aws_certificatemanager, aws_lambda, aws_route53, Stack, StackProps} from "aws-cdk-lib";
+import {aws_lambda, Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {Architecture, AssetCode, Code, Runtime} from "aws-cdk-lib/aws-lambda";
 import {PolicyStatement} from "aws-cdk-lib/aws-iam";
-import {HttpApi, DomainName} from "@aws-cdk/aws-apigatewayv2-alpha";
+import {HttpApi} from "@aws-cdk/aws-apigatewayv2-alpha";
 import {HttpLambdaIntegration} from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import {HostedZone} from "aws-cdk-lib/aws-route53";
 
 export class TranslateServerStack extends Stack {
 
@@ -17,34 +16,13 @@ export class TranslateServerStack extends Stack {
             actions: ['translate:TranslateText']
         }));
 
-        const domain = this.createDomainName();
-        this.createApiGateway(new HttpLambdaIntegration('AppIntegration', appFunction), domain);
-
-        new aws_route53.CnameRecord(this, "AppRouteRecord", {
-            domainName: domain.regionalDomainName,
-            zone: HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
-                hostedZoneId: 'Z08267903R7OZVB2BE5UB',
-                zoneName: 'drskur.xyz'
-            }),
-            recordName: 'translate'
-        });
-    }
-
-    private createDomainName(): DomainName {
-        const arn = 'arn:aws:acm:ap-northeast-1:832344807991:certificate/b1dcbdc1-5b2f-4690-a108-5ca6e38b21fe';
-        return new DomainName(this, "TranslateDomainName", {
-            domainName: "translate.drskur.xyz",
-            certificate: aws_certificatemanager.Certificate.fromCertificateArn(this, "wild", arn),
-        });
+        this.createApiGateway(new HttpLambdaIntegration('AppIntegration', appFunction));
 
     }
 
-    private createApiGateway(defaultIntegration: HttpLambdaIntegration, domainName: DomainName): HttpApi {
+    private createApiGateway(defaultIntegration: HttpLambdaIntegration): HttpApi {
         return new HttpApi(this, "TranslateApi", {
             defaultIntegration,
-            defaultDomainMapping: {
-                domainName,
-            }
         });
     }
 
