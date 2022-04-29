@@ -8,42 +8,35 @@
     <script defer src="https://unpkg.com/alpinejs@3.9.6/dist/cdn.min.js"></script>
 </head>
 <body>
-    <div x-data="{text: ''}" class="container mx-auto">
+    <div x-data="{text: '', loading: false, translatedText: ''}" class="container mx-auto">
         <textarea 
-            @change="handleChangeText($data)"
+            @change="await handleChangeText($data)"
             x-model="text"
             class="resize-none border rounded w-full mt-5 h-40 p-3"></textarea>
     
         <div class="mt-3 w-full">
-            <p x-show="$store.fetch.loading">Translating...</p>
+            <p x-show="loading">Translating...</p>
             <textarea 
-                x-show="$store.fetch.translatedText !== ''"
-                x-text="$store.fetch.translatedText"
-                class="resize-none border rounded h-screen w-full mt-5 p-3">{res.translatedText}</textarea>
+                x-show="translatedText !== ''"
+                x-text="translatedText"
+                class="resize-none border rounded h-screen w-full mt-5 p-3"></textarea>
         </div>
     </div>
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('fetch', {
-                loading: false,
-                translatedText: ''
-            });
-        })
+        async function handleChangeText($data) {
+            $data.loading = true;
 
-        function handleChangeText({text}) {
-            Alpine.store('fetch', { loading: true, translatedText: '' });
-            fetch('/api/translate', {
+            const res = await fetch('/api/translate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({text})
-            })
-                .then(res => res.json())
-                .then(res => Alpine.store('fetch', {
-                    loading: false,
-                    translatedText: res.translatedText
-                }));
+                body: JSON.stringify({ text: $data.text })
+            });
+            const json = await res.json();
+
+            $data.loading = false;
+            $data.translatedText = json.translatedText;
         }
     </script>
 </body>
