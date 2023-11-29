@@ -1,19 +1,29 @@
-import { monorepo } from "@aws/pdk";
 import { InfrastructureTsProject } from "@aws/pdk/infrastructure";
-import { javascript } from "projen";
+import { javascript, Project } from "projen";
+import { MonorepoTsProject } from "@aws/pdk/monorepo";
 
-const project = new monorepo.MonorepoTsProject({
+const monorepo = new MonorepoTsProject({
   devDeps: ["@aws/pdk"],
   name: "translate",
   packageManager: javascript.NodePackageManager.PNPM,
   projenrcTs: true,
 });
-project.addGitIgnore(".idea");
+monorepo.addGitIgnore(".idea");
 
-new InfrastructureTsProject({
-  parent: project,
+const infraProject = new InfrastructureTsProject({
+  parent: monorepo,
   outdir: "packages/infra",
   name: "infra",
 });
 
-project.synth();
+const serverProject = new Project({
+  parent: monorepo,
+  outdir: "packages/server",
+  name: "server",
+});
+serverProject.compileTask.reset("make codepipeline");
+serverProject.addGitIgnore(".dist");
+serverProject.addGitIgnore("target");
+
+monorepo.addImplicitDependency(infraProject, serverProject);
+monorepo.synth();
