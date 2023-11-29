@@ -15,6 +15,9 @@ const infraProject = new InfrastructureTsProject({
   outdir: "packages/infra",
   name: "infra",
 });
+infraProject.addTask("deploy:codepipeline", {
+  exec: "cdk deploy TranslateServerCodePipelineStack --require-approval never",
+});
 
 const serverProject = new Project({
   parent: monorepo,

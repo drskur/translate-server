@@ -6,6 +6,7 @@
     "compile": "npx projen compile",
     "default": "npx projen default",
     "deploy": "npx projen deploy",
+    "deploy:codepipeline": "npx projen deploy:codepipeline",
     "deploy:dev": "npx projen deploy:dev",
     "destroy": "npx projen destroy",
     "diff": "npx projen diff",

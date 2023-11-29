@@ -25,7 +25,12 @@ $ make build
 $ npx cdk deploy TranslateServerStack
 
 # CDK Pipeline
-# You need create github token, <admin:repo_hook> and <repo> permission is needed.
+# You need create github token(classic), <admin:repo_hook> and <repo> permission is needed. (classic)
+# You need create github token(fine-grained), repository permission - Webhooks Access: Read and write)
 $ aws secretsmanager create-secret --name github-access-token-secret --description "Github access token" --secret-string <GITHUB_ACCESS_TOKEN> --region <REGION>
-$ npx cdk deploy TranslateServerCdkPipelineStack
+
+# if you'll use aws file
+$ export AWS_PROFILE=<your aws profile>
+$ cd packages/infra
+$ pdk deploy:codepipeline
 ```

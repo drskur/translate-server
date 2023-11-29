@@ -22,7 +22,7 @@ export class CodepipelineStack extends Stack {
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub("drskur/translate-server", "main", {
           authentication: SecretValue.secretsManager(
-            "github-access-token-secret",
+            "translate-github-access-token",
           ),
         }),
         commands: [

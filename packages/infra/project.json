@@ -134,6 +134,13 @@
         "command": "pnpm exec projen deploy:dev",
         "cwd": "packages/infra"
       }
+    },
+    "deploy:codepipeline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm exec projen deploy:codepipeline",
+        "cwd": "packages/infra"
+      }
     }
   },
   "implicitDependencies": [

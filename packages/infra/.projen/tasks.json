@@ -43,6 +43,14 @@
         }
       ]
     },
+    "deploy:codepipeline": {
+      "name": "deploy:codepipeline",
+      "steps": [
+        {
+          "exec": "cdk deploy TranslateServerCodePipelineStack --require-approval never"
+        }
+      ]
+    },
     "deploy:dev": {
       "name": "deploy:dev",
       "description": "Performs a hotswap CDK deployment, useful for faster development cycles",

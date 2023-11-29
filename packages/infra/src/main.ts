@@ -4,10 +4,10 @@ import { AwsPrototypingChecks, PDKNag } from "@aws/pdk/pdk-nag";
 import { CodepipelineStack } from "./stacks/codepipeline-stack";
 
 // for development, use account/region from cdk cli
-// const devEnv = {
-//   account: process.env.CDK_DEFAULT_ACCOUNT,
-//   region: process.env.CDK_DEFAULT_REGION,
-// };
+const devEnv = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
 
 /* eslint-disable @typescript-eslint/no-floating-promises */
 (async () => {
@@ -15,7 +15,9 @@ import { CodepipelineStack } from "./stacks/codepipeline-stack";
     nagPacks: [new AwsPrototypingChecks()],
   });
 
-  new CodepipelineStack(app, "TranslateServerCodePipelineStack");
+  new CodepipelineStack(app, "TranslateServerCodePipelineStack", {
+    env: devEnv,
+  });
 
   // new ApplicationStack(app, "infra-dev", { env: devEnv });
 
