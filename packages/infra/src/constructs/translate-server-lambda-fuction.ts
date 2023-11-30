@@ -7,6 +7,7 @@ import {
   Runtime,
 } from "aws-cdk-lib/aws-lambda";
 import { Stage } from "aws-cdk-lib";
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export class TranslateServerLambdaFuction extends Construct {
   public readonly fn: IFunction;
@@ -21,5 +22,13 @@ export class TranslateServerLambdaFuction extends Construct {
       handler: "bootstrap",
       architecture: Architecture.ARM_64,
     });
+
+    this.fn.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ["translate:TranslateText"],
+        resources: ["*"],
+      }),
+    );
   }
 }
