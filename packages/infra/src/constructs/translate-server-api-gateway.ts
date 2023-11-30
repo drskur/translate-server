@@ -1,4 +1,5 @@
-import { IRestApi, LambdaRestApi } from "aws-cdk-lib/aws-apigateway";
+import { HttpApi, IHttpApi } from "@aws-cdk/aws-apigatewayv2-alpha";
+import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
 import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
@@ -7,7 +8,7 @@ export interface TranslateServerApiGatewayProps {
 }
 
 export class TranslateServerApiGateway extends Construct {
-  public readonly restApi: IRestApi;
+  public readonly httpApi: IHttpApi;
 
   constructor(
     scope: Construct,
@@ -18,10 +19,9 @@ export class TranslateServerApiGateway extends Construct {
 
     const { handler } = props;
 
-    this.restApi = new LambdaRestApi(this, "RestApi", {
-      restApiName: "TranslateServerApi",
-      handler,
-      proxy: true,
+    this.httpApi = new HttpApi(this, "HttpApi", {
+      apiName: "TranslateServerApi",
+      defaultIntegration: new HttpLambdaIntegration("Integration", handler),
     });
   }
 }

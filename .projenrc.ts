@@ -16,6 +16,10 @@ const infraProject = new InfrastructureTsProject({
   outdir: "packages/infra",
   name: "infra",
   packageManager: NodePackageManager.PNPM,
+  deps: [
+    "@aws-cdk/aws-apigatewayv2-alpha",
+    "@aws-cdk/aws-apigatewayv2-integrations-alpha",
+  ],
 });
 infraProject.addTask("deploy:codepipeline", {
   exec: "cdk deploy TranslateServerCodePipelineStack --require-approval never",
