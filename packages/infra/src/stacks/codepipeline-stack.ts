@@ -26,10 +26,10 @@ export class CodepipelineStack extends Stack {
           ),
         }),
         commands: [
-          "npm i -g pnpm",
+          "npm i -g aws-cdk pnpm",
           "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
           "source $HOME/.cargo/env",
-          "npx cdk synth",
+          "pdk build",
         ],
       }),
     });

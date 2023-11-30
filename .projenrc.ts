@@ -1,11 +1,12 @@
 import { InfrastructureTsProject } from "@aws/pdk/infrastructure";
-import { javascript, Project } from "projen";
+import { Project } from "projen";
 import { MonorepoTsProject } from "@aws/pdk/monorepo";
+import { NodePackageManager } from "projen/lib/javascript";
 
 const monorepo = new MonorepoTsProject({
   devDeps: ["@aws/pdk"],
   name: "translate",
-  packageManager: javascript.NodePackageManager.PNPM,
+  packageManager: NodePackageManager.PNPM,
   projenrcTs: true,
 });
 monorepo.addGitIgnore(".idea");
@@ -14,6 +15,7 @@ const infraProject = new InfrastructureTsProject({
   parent: monorepo,
   outdir: "packages/infra",
   name: "infra",
+  packageManager: NodePackageManager.PNPM,
 });
 infraProject.addTask("deploy:codepipeline", {
   exec: "cdk deploy TranslateServerCodePipelineStack --require-approval never",
