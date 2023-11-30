@@ -2,6 +2,7 @@ import { CdkGraph, FilterPreset, Filters } from "@aws/pdk/cdk-graph";
 import { CdkGraphDiagramPlugin } from "@aws/pdk/cdk-graph-plugin-diagram";
 import { AwsPrototypingChecks, PDKNag } from "@aws/pdk/pdk-nag";
 import { CodepipelineStack } from "./stacks/codepipeline-stack";
+import { ApplicationStage } from "./stacks/application-stage";
 
 // for development, use account/region from cdk cli
 const devEnv = {
@@ -15,11 +16,19 @@ const devEnv = {
     nagPacks: [new AwsPrototypingChecks()],
   });
 
-  new CodepipelineStack(app, "TranslateServerCodePipelineStack", {
+  const { pipeline } = new CodepipelineStack(
+    app,
+    "TranslateServerCodePipelineStack",
+    {
+      env: devEnv,
+    },
+  );
+  const devStage = new ApplicationStage(app, "Dev", {
     env: devEnv,
   });
+  pipeline.addStage(devStage);
 
-  // new ApplicationStack(app, "infra-dev", { env: devEnv });
+  // new TranslateServerStack(app, "infra-dev", { env: devEnv });
 
   const graph = new CdkGraph(app, {
     plugins: [

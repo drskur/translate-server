@@ -8,10 +8,12 @@ import {
 import { Construct } from "constructs";
 
 export class CodepipelineStack extends Stack {
+  public readonly pipeline: CodePipeline;
+
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    new CodePipeline(this, "CodePipeline", {
+    this.pipeline = new CodePipeline(this, "CodePipeline", {
       pipelineName: "TranslateServerPipeline",
       synthCodeBuildDefaults: {
         buildEnvironment: {
@@ -25,11 +27,13 @@ export class CodepipelineStack extends Stack {
             "translate-github-access-token",
           ),
         }),
+        primaryOutputDirectory: "packages/infra/cdk.out",
         commands: [
           "npm i -g aws-cdk pnpm",
           "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
           "source $HOME/.cargo/env",
-          "pdk build",
+          "pnpm i",
+          "npx pdk build",
         ],
       }),
     });
