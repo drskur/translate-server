@@ -17,6 +17,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(state.clone()))
             .wrap(Logger::default())
+            .service(services::ping::handler)
             .service(services::translate::handler)
     };
 
