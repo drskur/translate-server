@@ -34,5 +34,13 @@ serverProject.compileTask.reset("make codepipeline");
 serverProject.addGitIgnore(".dist");
 serverProject.addGitIgnore("target");
 
+const tuiProject = new Project({
+  parent: monorepo,
+  outdir: "packages/tui",
+  name: "tui"
+});
+tuiProject.addGitIgnore("target");
+
+
 monorepo.addImplicitDependency(infraProject, serverProject);
 monorepo.synth();

@@ -19,6 +19,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .service(services::ping::handler)
             .service(services::translate::handler)
+            .service(services::translate_web::handler)
     };
 
     HttpServer::new(factory)
